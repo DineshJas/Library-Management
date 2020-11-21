@@ -1,0 +1,10 @@
+{
+    "registerUser": "http://localhost:8080/api/user/register",
+    "getBooksList": "http://localhost:8080/api/user/get/books",
+    "addBookDetails": "http://localhost:8080/api/user/add/book",
+    "deleteBook": "http://localhost:8080/api/user/delete/book",
+    "editBook": "http://localhost:8080/api/user/edit/book",
+    "getParticularBook": "http://localhost:8080/api/user/get/book/detail",
+    "getUsersList": "http://localhost:8080/api/user/get/users/list",
+    "editUserStatus": "http://localhost:8080/api/user/delete/user"
+}
