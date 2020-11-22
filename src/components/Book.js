@@ -34,8 +34,12 @@ class Book extends Component {
         this.props.editBookCallBack(true, data)
     }
 
+    lendSelectedBook = (bookId) => {
+        this.props.lendBookCallBack(true, bookId);
+    }
+
     render() { 
-        const { bookName, bookAuthor, bookPublisher, bookCategory, bookImage, bookId} = this.props;
+        const { bookName, bookAuthor, bookPublisher, bookCategory, bookImage, bookId, bookLentedStatus} = this.props;
         return ( 
             <React.Fragment>
                 <div className="card post-card bg-light">
@@ -54,6 +58,21 @@ class Book extends Component {
                         </div>
                         <div className="d-flex justify-content-end">
                             <div>
+                                {bookLentedStatus === 0 ?
+                                    <button
+                                        className="btn btn-outline-success btn-edit"
+                                        onClick={() => this.lendSelectedBook(bookId)
+                                        }
+                                    >
+                                        Lend Book
+                                    </button>
+                                : <button
+                                    className="btn btn-outline-danger mr-2"
+                                    disabled
+                                >
+                                    Already lent
+                                </button>
+                                }
                                 <button
                                     className="btn btn-outline-primary btn-edit"
                                     onClick={() => 

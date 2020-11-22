@@ -6,5 +6,7 @@
     "editBook": "http://localhost:8080/api/user/edit/book",
     "getParticularBook": "http://localhost:8080/api/user/get/book/detail",
     "getUsersList": "http://localhost:8080/api/user/get/users/list",
-    "editUserStatus": "http://localhost:8080/api/user/delete/user"
+    "editUserStatus": "http://localhost:8080/api/user/delete/user",
+    "getActiveUsersList": "http://localhost:8080/api/user/get/active/users/list",
+    "lendBookToUser": "http://localhost:8080/api/user/lend/book"
 }

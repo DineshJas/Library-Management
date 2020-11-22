@@ -84,3 +84,29 @@ export const getUsersListApi = () => dispatch => {
         console.log(error);
     })
 }
+
+export const getActiveUsersListApi = (callBack) => dispatch => {
+    axios.get(api.getActiveUsersList)
+    .then((res) => {
+        console.log(res.data)
+        // dispatch({})
+        callBack(res.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error);
+    })
+}
+
+export const lendBookApi = (data, callBack) => dispatch => {
+    axios.put(api.lendBookToUser, data)
+    .then((res) => {
+        console.log(res.data)
+        // dispatch({})
+        callBack(res.data)
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error);
+    })
+}

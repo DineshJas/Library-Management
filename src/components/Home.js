@@ -5,7 +5,7 @@ import FileBase64 from "react-file-base64";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { getBookListApi, addNewBookApi, editBookApi } from "../actions/UserAction";
+import { getBookListApi, addNewBookApi, editBookApi, getActiveUsersListApi, lendBookApi } from "../actions/UserAction";
 import Book from './Book';
 
 class Home extends Component {
@@ -14,6 +14,7 @@ class Home extends Component {
     this.state = { 
       openAddBookModal: false,
       openEditBookModal: false,
+      openLendBookModal: false,
       bookName: "",
       authorName: "",
       publisherName: "",
@@ -29,6 +30,9 @@ class Home extends Component {
       editBookImage: null,
       editFiles: [],
       editFile: null,
+      activeUsersList: [],
+      selectedUser: 0,
+      lendBookId: 0,
      }
   }
 
@@ -42,6 +46,10 @@ class Home extends Component {
 
   editBookModalStatus = () => {
     this.setState({openEditBookModal: !this.state.openEditBookModal});
+  }
+
+  lendBookModalStatus = () => {
+    this.setState({openLendBookModal: !this.state.openLendBookModal})
   }
 
   getFiles = (files) => {
@@ -67,6 +75,21 @@ class Home extends Component {
       editBookImage: base64Value,
     });
   };
+
+  lendBookToUser = () => {
+    let data = {
+      bookId: this.state.lendBookId,
+      userId: this.state.selectedUser
+    }
+    this.props.lendBookApi(data, (res) => {
+      this.invokeBookList(res.response);
+    })
+    this.setState({
+      lendBookApi: 0,
+      selectedUser: 0,
+      openLendBookModal: false
+    })
+  }
 
   addNewBook = () => {
     let data = {
@@ -121,6 +144,33 @@ class Home extends Component {
           this.invokeBookList(res.response);
       }
     })
+  }
+
+  renderLendBookModal = () => {
+    return(
+      <>
+        <Modal  isOpen={this.state.openLendBookModal} toggle={this.lendBookModalStatus} className="">
+            <ModalHeader toggle={this.lendBookModalStatus}>Lend Book to User</ModalHeader>
+            <ModalBody>
+              <div className="form-group">
+                  <label htmlFor="user-name">Book Name</label>
+                  <select
+                    className="form-control" 
+                    id="user-name" 
+                    value={this.state.selectedUser} 
+                    onChange={(event)=>{this.setState({selectedUser:parseInt(event.target.value)})}}>
+                  <option value={0}>Select the author</option>
+                  {this.state.activeUsersList.length &&
+                      this.state.activeUsersList.map(user => 
+                  <option value={user.userId} key={user.userId}>{user.userName}</option>
+                  )}
+                  </select>
+              </div>
+              <Button color="primary" type="submit" onClick={this.lendBookToUser}>Lend</Button>
+            </ModalBody>
+        </Modal>
+      </>
+    )
   }
 
   renderAddBookModal = () => {
@@ -219,6 +269,19 @@ class Home extends Component {
       editBookImage: bookImage,
       openEditBookModal: true,
     });
+  }
+
+  lendBookForUser = (status, bookId) => {
+    console.log(bookId);
+    this.setState({
+      openLendBookModal: status,
+      lendBookId: bookId
+    }, this.props.getActiveUsersListApi((res) => {
+      console.log(res);
+      this.setState({
+        activeUsersList: res.response
+      })
+    }))
   }
 
   renderEditBookModal = () => {
@@ -326,7 +389,8 @@ class Home extends Component {
                 bookPublisher={books.publisherName} 
                 bookCategory={books.bookCategory} 
                 bookImage={books.bookImage} 
-                bookId={books.bookId}
+                bookId={books.bookId} 
+                bookLentedStatus={books.isBookLented}
                 key={books.bookId} 
                 deleteBookCallback={(isDeleted, message) => 
                   isDeleted ? this.invokeBookList(message) : ''
@@ -334,11 +398,15 @@ class Home extends Component {
                 editBookCallBack={(isEditEnabled, data) => 
                   isEditEnabled && this.editBookDetails(data)
                 }
+                lendBookCallBack={(status, data) => 
+                  this.lendBookForUser(status, data)
+                }
               />
             )}
 
             {this.state.openAddBookModal ? this.renderAddBookModal() : ''}
             {this.state.openEditBookModal ? this.renderEditBookModal() : ''}
+            {this.state.openLendBookModal ? this.renderLendBookModal() : ''}
         </>
      );
   }
@@ -361,6 +429,12 @@ const mapDispatchToProps = (disaptch) => {
     },
     editBookApi: (data, callBack) => {
       disaptch(editBookApi(data, callBack))
+    },
+    getActiveUsersListApi: (callBack) => {
+      disaptch(getActiveUsersListApi(callBack))
+    },
+    lendBookApi: (data, callBack) => {
+      disaptch(lendBookApi(data, callBack))
     },
   };
 };
